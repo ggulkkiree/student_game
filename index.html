@@ -3,45 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>외출 준비 앱</title>
-    <style>
-        body { font-family: 'Malgun Gothic', sans-serif; text-align: center; background-color: #f0f8ff; margin: 0; padding: 20px; }
-        h1 { color: #333; }
-        
-        /* 날씨 패널 */
-        #weather-panel { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .weather-item { font-size: 24px; transition: transform 0.5s ease; padding: 10px; border-radius: 10px; }
-        .weather-item.enlarge { transform: scale(2.5); background-color: #ffe4e1; z-index: 10; position: relative; }
-
-        /* 메인 게임 영역 */
-        #game-area { display: flex; justify-content: center; gap: 50px; margin-top: 20px; }
-
-        /* 캐릭터 영역 (드롭 존) */
-        #character { width: 200px; height: 350px; background-color: #ffece0; border: 3px dashed #ffb6c1; border-radius: 20px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 80px; }
-        #character::before { content: "🧍"; position: absolute; font-size: 150px; opacity: 0.5; z-index: 0; }
-        
-        /* 캐릭터에 입힌 옷 레이어링 (절대 좌표로 겹치기) */
-        .equipped-item { position: absolute; font-size: 60px; z-index: 1; cursor: pointer; }
-        .equipped-item[data-type="outer"] { z-index: 2; font-size: 80px; } /* 겉옷은 더 위에, 더 크게 */
-        .equipped-item[data-type="accessory"] { z-index: 3; font-size: 50px; margin-top: -100px; } /* 마스크 등은 얼굴 쪽에 */
-
-        /* 옷장 영역 (드래그 존) */
-        #wardrobe { width: 300px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .clothing-item { font-size: 50px; cursor: grab; background: #f9f9f9; border: 1px solid #ddd; border-radius: 10px; padding: 10px; transition: background 0.2s; }
-        .clothing-item:hover { background: #e6f7ff; }
-        .clothing-item:active { cursor: grabbing; }
-
-        /* 하단 버튼 */
-        #controls { margin-top: 30px; }
-        button { font-size: 20px; padding: 10px 30px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
-        button:hover { background-color: #45a049; }
-        
-        #feedback { font-size: 24px; font-weight: bold; margin-top: 20px; color: #ff4500; height: 30px; }
-    </style>
+    <title>외출 준비 앱 - 분리형 로직</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <h1>오늘의 외출 준비!</h1>
+    
+    <div id="settings">
+        <label for="difficulty">난이도 선택: </label>
+        <select id="difficulty" onchange="changeDifficulty()">
+            <option value="1">1단계 (쉬움 - 필수 옷만)</option>
+            <option value="2">2단계 (보통 - 약간 헷갈리게)</option>
+            <option value="3">3단계 (어려움 - 옷장 가득)</option>
+        </select>
+    </div>
 
     <div id="weather-panel">
         <div id="weather-temp" class="weather-item">🌡️ <span></span></div>
@@ -50,17 +26,23 @@
     </div>
 
     <div id="game-area">
-        <div id="character" ondrop="drop(event)" ondragover="allowDrop(event)">
-            </div>
+        <div id="character" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
 
         <div id="wardrobe">
-            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="tshirt" data-type="top" data-warmth="low">👕</div>
-            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="sweater" data-type="top" data-warmth="mid">🧶</div>
-            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="padding" data-type="outer" data-warmth="high">🧥</div>
-            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="pants" data-type="bottom" data-warmth="mid">👖</div>
-            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="shorts" data-type="bottom" data-warmth="low">🩳</div>
-            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="umbrella" data-type="accessory" data-rain="true">☂️</div>
-            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="mask" data-type="accessory" data-dust="true">😷</div>
+            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="tshirt" data-type="top" data-warmth="low" data-level="1">👕</div>
+            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="padding" data-type="outer" data-warmth="high" data-level="1">🧥</div>
+            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="pants" data-type="bottom" data-warmth="mid" data-level="1">👖</div>
+            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="shorts" data-type="bottom" data-warmth="low" data-level="1">🩳</div>
+            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="umbrella" data-type="accessory" data-rain="true" data-level="1">☂️</div>
+            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="mask" data-type="accessory" data-dust="true" data-level="1">😷</div>
+            
+            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="sweater" data-type="top" data-warmth="mid" data-level="2">🧶</div>
+            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="boots" data-type="accessory" data-rain="true" data-level="2">👢</div>
+            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="scarf" data-type="accessory" data-warmth="mid" data-level="2">🧣</div>
+
+            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="sunglasses" data-type="accessory" data-level="3">🕶️</div>
+            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="cap" data-type="accessory" data-level="3">🧢</div>
+            <div class="clothing-item" draggable="true" ondragstart="drag(event)" id="dress" data-type="top" data-warmth="low" data-level="3">👗</div>
         </div>
     </div>
 
@@ -70,112 +52,6 @@
     
     <div id="feedback"></div>
 
-    <script>
-        // 1. 랜덤 날씨 생성 로직
-        let currentWeather = { temp: 0, rain: false, dust: false };
-        
-        function generateWeather() {
-            // 기온: -10도 ~ 30도 사이 랜덤
-            currentWeather.temp = Math.floor(Math.random() * 41) - 10;
-            // 비: 30% 확률로 옴
-            currentWeather.rain = Math.random() < 0.3;
-            // 미세먼지: 30% 확률로 나쁨
-            currentWeather.dust = Math.random() < 0.3;
-
-            // 화면에 표시
-            document.querySelector('#weather-temp span').innerText = `${currentWeather.temp}°C`;
-            document.querySelector('#weather-rain span').innerText = currentWeather.rain ? "☂️ 80%" : "☀️ 0%";
-            document.querySelector('#weather-dust span').innerText = currentWeather.dust ? "🔴😷 나쁨" : "🟢🙂 좋음";
-        }
-
-        // 2. 드래그 앤 드롭 로직
-        function allowDrop(event) {
-            event.preventDefault(); // 기본 이벤트 방지해야 드롭 가능
-        }
-
-        function drag(event) {
-            event.dataTransfer.setData("text", event.target.id);
-        }
-
-        function drop(event) {
-            event.preventDefault();
-            const data = event.dataTransfer.getData("text");
-            const draggedElement = document.getElementById(data);
-            
-            // 옷장에 있는 아이템 복제해서 캐릭터에 입히기 (레이어링)
-            const clone = draggedElement.cloneNode(true);
-            clone.className = "equipped-item";
-            clone.draggable = false; // 입은 옷은 다시 드래그 방지 (원하면 삭제 로직 추가 가능)
-            
-            // 클릭하면 벗기 (삭제)
-            clone.onclick = function() { this.remove(); };
-
-            document.getElementById("character").appendChild(clone);
-        }
-
-        // 3. 완료 확인 및 힌트 로직
-        let failCount = 0;
-
-        function checkOutfit() {
-            const equippedItems = document.querySelectorAll('#character .equipped-item');
-            const feedbackBox = document.getElementById('feedback');
-            
-            let hasUmbrella = false;
-            let hasMask = false;
-            let warmthLevel = 0;
-
-            // 입은 옷 분석
-            equippedItems.forEach(item => {
-                if(item.dataset.rain) hasUmbrella = true;
-                if(item.dataset.dust) hasMask = true;
-                if(item.dataset.warmth === 'high') warmthLevel += 3;
-                if(item.dataset.warmth === 'mid') warmthLevel += 2;
-                if(item.dataset.warmth === 'low') warmthLevel += 1;
-            });
-
-            let errorMessage = "";
-            let errorTarget = null; // 힌트를 줄 날씨 아이콘
-
-            // 조건 검사
-            if (currentWeather.rain && !hasUmbrella) {
-                errorMessage = "앗! 비가 오는데 우산이 없어서 젖었어요! ☔";
-                errorTarget = "weather-rain";
-            } else if (currentWeather.dust && !hasMask) {
-                errorMessage = "콜록콜록! 미세먼지가 나쁜데 마스크가 없어요! 😷";
-                errorTarget = "weather-dust";
-            } else if (currentWeather.temp < 10 && warmthLevel < 3) {
-                errorMessage = "오들오들... 날씨가 추운데 옷이 얇아요! ❄️";
-                errorTarget = "weather-temp";
-            } else if (currentWeather.temp > 25 && warmthLevel > 2) {
-                errorMessage = "뻘뻘... 날씨가 더운데 옷이 너무 두꺼워요! 💦";
-                errorTarget = "weather-temp";
-            }
-
-            // 피드백 제공
-            if (errorMessage === "") {
-                feedbackBox.innerText = "✨ 완벽한 외출 준비 끝! 정말 잘했어요! ✨";
-                feedbackBox.style.color = "green";
-                failCount = 0;
-                // 성공 효과음 추가 위치 (예: new Audio('success.mp3').play();)
-            } else {
-                feedbackBox.innerText = errorMessage;
-                feedbackBox.style.color = "red";
-                failCount++;
-                // 실패/기침 효과음 추가 위치
-
-                // 1차 힌트: 날씨 기호 확대
-                if (errorTarget) {
-                    const targetElement = document.getElementById(errorTarget);
-                    targetElement.classList.add('enlarge');
-                    setTimeout(() => {
-                        targetElement.classList.remove('enlarge');
-                    }, 2000); // 2초 후 원상복구
-                }
-            }
-        }
-
-        // 앱 시작 시 날씨 세팅
-        window.onload = generateWeather;
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
