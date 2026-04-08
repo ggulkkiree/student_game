@@ -1,0 +1,61 @@
+body { font-family: 'Malgun Gothic', sans-serif; text-align: center; background-color: #f0f8ff; margin: 0; padding: 20px; }
+h1 { color: #333; margin-bottom: 10px; }
+
+/* 난이도 선택 패널 */
+#settings { margin-bottom: 20px; }
+select { font-size: 18px; padding: 5px 10px; border-radius: 5px; }
+
+/* 날씨 패널 */
+#weather-panel { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.weather-item { font-size: 24px; transition: transform 0.5s ease; padding: 10px; border-radius: 10px; }
+.weather-item.enlarge { transform: scale(2.5); background-color: #ffe4e1; z-index: 10; position: relative; }
+
+/* 메인 게임 영역 */
+#game-area { display: flex; justify-content: center; gap: 50px; margin-top: 20px; }
+
+/* 캐릭터 영역 (드롭 존) */
+#character { width: 200px; height: 350px; background-color: #ffece0; border: 3px dashed #ffb6c1; border-radius: 20px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 80px; }
+#character::before { content: "🧍"; position: absolute; font-size: 150px; opacity: 0.5; z-index: 0; }
+
+/* 옷장 영역 (드래그 존) */
+#wardrobe { width: 350px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-wrap: wrap; gap: 15px; align-content: flex-start; }
+.clothing-item { font-size: 50px; cursor: grab; background: #f9f9f9; border: 1px solid #ddd; border-radius: 10px; padding: 10px; transition: background 0.2s, transform 0.2s; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; }
+.clothing-item:hover { background: #e6f7ff; }
+.clothing-item:active { cursor: grabbing; }
+
+/* 2차 힌트 깜빡임 애니메이션 */
+.blink-hint { animation: blinking 1s infinite; border: 3px solid #ff4500; background-color: #fff0f5; }
+@keyframes blinking {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); box-shadow: 0 0 15px #ff4500; }
+    100% { transform: scale(1); }
+}
+
+/* 하단 버튼 */
+#controls { margin-top: 30px; }
+button { font-size: 20px; padding: 10px 30px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+button:hover { background-color: #45a049; }
+
+#feedback { font-size: 24px; font-weight: bold; margin-top: 20px; color: #ff4500; height: 30px; }
+
+/* --- 수정한 아이템 장착 CSS (배경 제거 & 위치 조정) --- */
+.equipped-item { 
+    position: absolute; 
+    background: transparent !important; 
+    border: none !important;            
+    box-shadow: none !important;        
+    cursor: pointer; 
+    transition: transform 0.2s;         
+}
+
+.equipped-item:hover { transform: scale(1.1); }
+
+/* 부위별 레이어 및 위치 설정 */
+.equipped-item[id^="cap"], .equipped-item[id^="sunglasses"] { top: 30px; font-size: 60px; z-index: 5; }
+.equipped-item[id^="mask"] { top: 60px; font-size: 40px; z-index: 6; }
+.equipped-item[id^="scarf"] { top: 90px; font-size: 50px; z-index: 4; }
+.equipped-item[id^="umbrella"] { top: 20px; left: 10px; font-size: 100px; z-index: 6; transform: rotate(-10deg); }
+.equipped-item[data-type="top"] { top: 120px; font-size: 80px; z-index: 2; }
+.equipped-item[data-type="outer"] { top: 120px; font-size: 100px; z-index: 3; } 
+.equipped-item[data-type="bottom"] { top: 210px; font-size: 80px; z-index: 1; }
+.equipped-item[id^="boots"] { top: 270px; font-size: 55px; z-index: 2; }
