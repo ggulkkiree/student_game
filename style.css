@@ -48,14 +48,22 @@ button:hover { background-color: #45a049; }
     transition: transform 0.2s;         
 }
 
+/* --- 수정한 아이템 장착 CSS (자유 배치 & 레이어만 유지) --- */
+.equipped-item { 
+    position: absolute; 
+    background: transparent !important; 
+    border: none !important;            
+    box-shadow: none !important;        
+    cursor: pointer; 
+    transition: transform 0.2s;         
+}
+
 .equipped-item:hover { transform: scale(1.1); }
 
-/* 부위별 레이어 및 위치 설정 */
-.equipped-item[id^="cap"], .equipped-item[id^="sunglasses"] { top: 30px; font-size: 60px; z-index: 5; }
-.equipped-item[id^="mask"] { top: 60px; font-size: 40px; z-index: 6; }
-.equipped-item[id^="scarf"] { top: 90px; font-size: 50px; z-index: 4; }
-.equipped-item[id^="umbrella"] { top: 20px; left: 10px; font-size: 100px; z-index: 6; transform: rotate(-10deg); }
-.equipped-item[data-type="top"] { top: 120px; font-size: 80px; z-index: 2; }
-.equipped-item[data-type="outer"] { top: 120px; font-size: 100px; z-index: 3; } 
-.equipped-item[data-type="bottom"] { top: 210px; font-size: 80px; z-index: 1; }
-.equipped-item[id^="boots"] { top: 270px; font-size: 55px; z-index: 2; }
+/* 부위별 레이어(z-index)만 유지하고 위치(top, left)는 삭제합니다. */
+.equipped-item[data-type="bottom"] { z-index: 1; }
+.equipped-item[data-type="top"] { z-index: 2; }
+.equipped-item[data-type="outer"] { z-index: 3; }
+.equipped-item[id*="scarf"] { z-index: 4; }
+.equipped-item[id*="mask"], .equipped-item[id*="sunglasses"], .equipped-item[id*="cap"] { z-index: 5; }
+.equipped-item[id*="umbrella"] { z-index: 6; }
