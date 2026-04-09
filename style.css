@@ -1,4 +1,8 @@
-body { font-family: 'Malgun Gothic', sans-serif; text-align: center; background-color: #f0f8ff; margin: 0; padding: 20px; }
+/* 파란색 텍스트 블록 지정 방지 */
+body { 
+    font-family: 'Malgun Gothic', sans-serif; text-align: center; background-color: #f0f8ff; margin: 0; padding: 20px; 
+    user-select: none; -webkit-user-select: none; 
+}
 h1 { color: #333; margin-bottom: 10px; }
 
 /* 난이도 선택 패널 */
@@ -19,6 +23,13 @@ select { font-size: 18px; padding: 5px 10px; border-radius: 5px; }
 
 /* 옷장 영역 (드래그 존) */
 #wardrobe { width: 350px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-wrap: wrap; gap: 15px; align-content: flex-start; }
+
+/* 아이템 파란색 텍스트 블록 지정 방지 */
+.clothing-item, .equipped-item { 
+    user-select: none; 
+    -webkit-user-select: none; 
+}
+
 .clothing-item { font-size: 50px; cursor: grab; background: #f9f9f9; border: 1px solid #ddd; border-radius: 10px; padding: 10px; transition: background 0.2s, transform 0.2s; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; }
 .clothing-item:hover { background: #e6f7ff; }
 .clothing-item:active { cursor: grabbing; }
@@ -35,20 +46,9 @@ select { font-size: 18px; padding: 5px 10px; border-radius: 5px; }
 #controls { margin-top: 30px; }
 button { font-size: 20px; padding: 10px 30px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
 button:hover { background-color: #45a049; }
-
 #feedback { font-size: 24px; font-weight: bold; margin-top: 20px; color: #ff4500; height: 30px; }
 
-/* --- 수정한 아이템 장착 CSS (배경 제거 & 위치 조정) --- */
-.equipped-item { 
-    position: absolute; 
-    background: transparent !important; 
-    border: none !important;            
-    box-shadow: none !important;        
-    cursor: pointer; 
-    transition: transform 0.2s;         
-}
-
-/* --- 수정한 아이템 장착 CSS (자유 배치 & 레이어만 유지) --- */
+/* --- 수정한 아이템 장착 CSS (자석처럼 제자리에 착! 달라붙기) --- */
 .equipped-item { 
     position: absolute; 
     background: transparent !important; 
@@ -60,10 +60,12 @@ button:hover { background-color: #45a049; }
 
 .equipped-item:hover { transform: scale(1.1); }
 
-/* 부위별 레이어(z-index)만 유지하고 위치(top, left)는 삭제합니다. */
-.equipped-item[data-type="bottom"] { z-index: 1; }
-.equipped-item[data-type="top"] { z-index: 2; }
-.equipped-item[data-type="outer"] { z-index: 3; }
-.equipped-item[id*="scarf"] { z-index: 4; }
-.equipped-item[id*="mask"], .equipped-item[id*="sunglasses"], .equipped-item[id*="cap"] { z-index: 5; }
-.equipped-item[id*="umbrella"] { z-index: 6; }
+/* 부위별 레이어 및 위치 (가운데 정렬 자석 효과) */
+.equipped-item[id^="cap"], .equipped-item[id^="sunglasses"] { top: 30px; font-size: 60px; z-index: 5; }
+.equipped-item[id^="mask"] { top: 75px; font-size: 40px; z-index: 6; }
+.equipped-item[id^="scarf"] { top: 90px; font-size: 50px; z-index: 4; }
+.equipped-item[id^="umbrella"] { top: 20px; left: 10px; font-size: 100px; z-index: 6; transform: rotate(-10deg); }
+.equipped-item[data-type="top"] { top: 120px; font-size: 80px; z-index: 2; }
+.equipped-item[data-type="outer"] { top: 120px; font-size: 100px; z-index: 3; } 
+.equipped-item[data-type="bottom"] { top: 210px; font-size: 80px; z-index: 1; }
+.equipped-item[id^="boots"] { top: 270px; font-size: 55px; z-index: 2; }
